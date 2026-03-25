@@ -117,8 +117,25 @@ If you are a developer looking to spin up this project on your local machine:
    ```
    *(On Windows use `mvnw.cmd spring-boot:run`)*
 4. **Access Web Portal**: Open your preferred modern browser and navigate to:
-   [http://localhost:8080](http://localhost:8080)
-5. **Database Access**: You can inspect the pure H2 database at `http://localhost:8080/h2-console` (Ensure config matches settings in `application.properties`).
+   [http://localhost:8082](http://localhost:8082)
+5. **Database Access**: You can inspect the pure H2 database at `http://localhost:8082/h2-console` (configured via `src/main/resources/application.properties`).
+
+---
+## 7. Upcoming Improvements (Roadmap)
+
+This project is designed to be easy to extend. Planned improvements focus on stronger organization and a more polished note-taking experience:
+
+### Folder & Organization System
+* Add “folders/notebooks” to group notes by topic.
+* Support moving notes between folders and filtering the notes list by folder.
+* Add tags (with optional tag colors) to enable faster discovery and advanced search.
+* Store note metadata (e.g., created/updated timestamps) for better navigation and sorting.
+
+### Color Coding Notes
+* Allow users to assign a color label to each note (and optionally to folders).
+* Display color indicators in the notes list and sidebar for quick visual scanning.
+* Use color accents in the editor UI (headers/badges) to make active notes feel distinct.
+* Provide a simple, consistent palette so color remains accessible and readable.
 
 ---
 *Created by Antigravity*
