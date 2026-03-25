@@ -67,5 +67,16 @@ H2 Console (from `src/main/resources/application.properties`):
   - `application.properties` - server + H2 configuration
 
 ## Screenshots
-If you add images later, consider placing them in a `/docs` folder and linking them from here.
+
+### Empty Workspace
+![Empty State](docs/empty-state.png)
+
+### Markdown Editor with Live Preview
+![Editor](docs/editor-live-preview.png)
+
+### Notes Dashboard
+![Notes List](docs/notes-list.png)
+
+### Search Functionality
+![Search](docs/search-feature.png)
 
