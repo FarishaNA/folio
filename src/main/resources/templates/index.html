@@ -5,171 +5,461 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown Notes</title>
-    <!-- Modern Styling -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <!-- Marked.js for rendering markdown as HTML on the index page -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        // Set theme before page loads to prevent flash
         const savedTheme = localStorage.getItem('theme') || 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
     </script>
+    <style>
+        /* ── App shell ─────────────────────────────────────────── */
+        .app-shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ── Left sidebar ───────────────────────────────────────── */
+        .folders-sidebar {
+            width: 220px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.1rem 1rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .folder-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .folder-nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0.5rem 0 0.75rem;
+            margin: 1px 0.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            min-height: 34px;
+            transition: background 0.12s, color 0.12s;
+        }
+
+        .folder-nav-item:hover {
+            background: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .folder-nav-item.is-active {
+            background: var(--active-folder-bg);
+            color: var(--active-folder-color);
+            font-weight: 500;
+        }
+
+        .folder-nav-item .folder-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .folder-nav-item .folder-label span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .folder-icon {
+            flex-shrink: 0;
+            opacity: 0.55;
+        }
+
+        .folder-delete-btn {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            opacity: 0;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 1rem;
+            line-height: 1;
+            transition: opacity 0.15s, background 0.15s, color 0.15s;
+        }
+
+        .folder-nav-item:hover .folder-delete-btn {
+            opacity: 1;
+        }
+
+        .folder-delete-btn:hover {
+            background: var(--danger-bg, #fee2e2);
+            color: var(--danger-color, #dc2626);
+        }
+
+        /* ── New folder form at the bottom of sidebar ───────────── */
+        .sidebar-footer {
+            flex-shrink: 0;
+            padding: 0.625rem 0.625rem 0.875rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .folder-create-form {
+            display: flex;
+            gap: 0.375rem;
+        }
+
+        .folder-name-input {
+            flex: 1;
+            min-width: 0;
+            padding: 0.35rem 0.6rem;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .folder-name-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .folder-name-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn-folder-add {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+        }
+
+        .btn-folder-add:hover {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+
+        /* ── Right panel ────────────────────────────────────────── */
+        .notes-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Top bar (right panel only) ─────────────────────────── */
+        .notes-topbar {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+            background: var(--bg-primary);
+        }
+
+        .notes-topbar .app-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            flex-shrink: 0;
+            margin-right: 0.25rem;
+        }
+
+        .notes-topbar .app-title svg {
+            color: var(--accent-color);
+        }
+
+        /* ── Notes content area ─────────────────────────────────── */
+        .notes-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        /* ── Keep your existing notes-grid and note-card styles ─── */
+    </style>
 </head>
 
 <body>
 
-    <header>
-        <h1>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
+<div class="app-shell">
+
+    <!-- ══ LEFT SIDEBAR ══════════════════════════════════════════ -->
+    <aside class="folders-sidebar">
+
+        <div class="sidebar-header">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
             </svg>
-            <a href="/" style="color: inherit; text-decoration: none;">Markdown Notes</a>
-        </h1>
-
-        <form th:action="@{/}" method="get" class="search-form">
-            <div class="search-input-wrapper">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" class="search-icon">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" name="keyword" th:value="${keyword}" placeholder="Search notes..."
-                    class="search-input">
-            </div>
-            <button type="submit" style="display: none;">Search</button>
-            <a th:if="${keyword != null and keyword != ''}" href="/" class="clear-search" title="Clear Search">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </a>
-        </form>
-
-        <div style="display: flex; gap: 0.75rem; align-items: center;">
-            <button id="theme-toggle" class="btn btn-icon" aria-label="Toggle Theme">
-                <svg id="theme-icon-dark" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-                <svg id="theme-icon-light" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-            </button>
-            <a href="/new" class="btn btn-primary">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                New Note
-            </a>
+            Folders
         </div>
-    </header>
 
-    <main>
-        <section>
+        <nav class="folder-nav" aria-label="Folders">
 
+            <!-- All Notes -->
+            <a th:href="@{/}" class="folder-nav-item"
+               th:classappend="${folderId == null} ? ' is-active' : ''">
+                <span class="folder-label">
+                    <svg class="folder-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    <span>All Notes</span>
+                </span>
+            </a>
+
+            <!-- Uncategorized -->
+            <a th:href="@{/(folderId=0)}" class="folder-nav-item"
+               th:classappend="${folderId != null and folderId == 0} ? ' is-active' : ''">
+                <span class="folder-label">
+                    <svg class="folder-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Uncategorized</span>
+                </span>
+            </a>
+
+            <!-- User folders -->
+            <th:block th:each="f : ${folders}">
+                <a th:href="@{/(folderId=${f.id})}" class="folder-nav-item"
+                   th:classappend="${folderId != null and folderId == f.id} ? ' is-active' : ''">
+                    <span class="folder-label">
+                        <svg class="folder-icon" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span th:text="${f.name}">Folder</span>
+                    </span>
+                    <a th:href="@{/folders/delete/{id}(id=${f.id})}" class="folder-delete-btn"
+                       th:title="'Delete ' + ${f.name}"
+                       onclick="return confirm('Delete this folder? Its notes will become Uncategorized.');">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </a>
+                </a>
+            </th:block>
+
+        </nav>
+
+        <!-- New folder input at bottom -->
+        <div class="sidebar-footer">
+            <form th:action="@{/folders}" method="post" class="folder-create-form">
+                <input type="text" name="name" placeholder="New folder…" maxlength="120"
+                       class="folder-name-input" aria-label="New folder name">
+                <button type="submit" class="btn-folder-add" title="Create folder">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- ══ RIGHT PANEL ═══════════════════════════════════════════ -->
+    <div class="notes-panel">
+
+        <!-- Top bar -->
+        <div class="notes-topbar">
+            <a href="/" class="app-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Markdown Notes
+            </a>
+
+            <!-- Search -->
+            <form th:action="@{/}" method="get" class="search-form" style="flex:1; max-width: 360px;">
+                <input type="hidden" name="folderId" th:if="${folderId != null}" th:value="${folderId}">
+                <div class="search-input-wrapper">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" name="keyword" th:value="${keyword}" placeholder="Search notes…"
+                           class="search-input">
+                </div>
+                <button type="submit" style="display:none;">Search</button>
+                <a th:if="${keyword != null and keyword != ''}" href="/" class="clear-search" title="Clear search">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </a>
+            </form>
+
+            <div style="display:flex; gap:0.6rem; align-items:center; margin-left:auto;">
+                <!-- Theme toggle -->
+                <button id="theme-toggle" class="btn btn-icon" aria-label="Toggle theme">
+                    <svg id="theme-icon-dark" style="display:none;" width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="theme-icon-light" style="display:none;" width="18" height="18" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+
+                <!-- New Note — always visible, folder-aware -->
+                <a th:if="${folderId == null or folderId == 0}" href="/new" class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Note
+                </a>
+                <a th:if="${folderId != null and folderId != 0}" th:href="@{/new(folderId=${folderId})}"
+                   class="btn btn-primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Note
+                </a>
+            </div>
+        </div>
+
+        <!-- Notes grid -->
+        <div class="notes-content">
+
+            <!-- Empty state -->
             <div th:if="${#lists.isEmpty(notes)}" class="empty-state">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--border-color)"
-                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 1rem;">
+                     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:1rem;">
                     <circle cx="11" cy="11" r="8" th:if="${keyword != null and keyword != ''}"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65" th:if="${keyword != null and keyword != ''}"></line>
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                        th:if="${keyword == null or keyword == ''}"></path>
+                          th:if="${keyword == null or keyword == ''}"></path>
                     <polyline points="14 2 14 8 20 8" th:if="${keyword == null or keyword == ''}"></polyline>
                 </svg>
-                <p th:if="${keyword != null and keyword != ''}">No notes found matching "<strong
-                        th:text="${keyword}">keyword</strong>".</p>
-                <p th:if="${keyword == null or keyword == ''}">Your workspace is empty.</p>
+                <p th:if="${keyword != null and keyword != ''}">
+                    No notes found matching "<strong th:text="${keyword}">keyword</strong>".
+                </p>
+                <p th:if="${keyword == null or keyword == ''}">No notes here yet.</p>
                 <a th:if="${keyword != null and keyword != ''}" href="/" class="btn btn-outline"
-                    style="margin-right: 0.5rem;">Clear Search</a>
-                <a href="/new" class="btn btn-primary">Create Your First Note</a>
+                   style="margin-right:0.5rem;">Clear Search</a>
+                <a th:if="${folderId == null or folderId == 0}" href="/new" class="btn btn-primary">
+                    Create your first note
+                </a>
+                <a th:if="${folderId != null and folderId != 0}"
+                   th:href="@{/new(folderId=${folderId})}" class="btn btn-primary">
+                    Create your first note
+                </a>
             </div>
 
+            <!-- Note cards -->
             <ul th:if="${!#lists.isEmpty(notes)}" class="notes-grid">
                 <li th:each="n : ${notes}">
-                    <a th:href="@{/edit/{id}(id=${n.id})}" class="note-card-link">
+                    <a th:href="@{/edit/{id}(id=${n.id})}" class="note-card-link"
+                       th:styleappend="${n.accentColor != null} ? |border-left: 4px solid ${n.accentColor}| : _">
                         <div class="note-card-header">
-                            <strong th:text="${n.title}">Note title</strong>
-                            <span class="note-meta" th:text="${#temporals.format(n.updatedAt, 'dd MMM yyyy • HH:mm')}">
-                                Just now
+                            <span class="note-title-row">
+                                <strong th:text="${n.title}">Note title</strong>
                             </span>
+                            <span class="note-meta"
+                                  th:text="${#temporals.format(n.updatedAt, 'dd MMM yyyy • HH:mm')}">Just now</span>
                         </div>
-                        <!-- We output raw markdown to a hidden element or data attribute, then render it -->
-                        <div class="note-preview markdown-preview-target" th:text="${n.content}" style="display:none;">
-                        </div>
+                        <div class="note-preview markdown-preview-target" th:text="${n.content}"
+                             style="display:none;"></div>
                         <div class="note-preview-rendered preview-panel"
-                            style="background:transparent; padding:0; border:none; box-shadow:none; overflow:hidden; max-height:8rem; margin:0;"
-                            th:id="'preview-' + ${n.id}">
-                            <!-- Javascript populates this -->
-                        </div>
+                             style="background:transparent;padding:0;border:none;box-shadow:none;overflow:hidden;max-height:8rem;margin:0;"
+                             th:id="'preview-' + ${n.id}"></div>
                     </a>
                 </li>
             </ul>
-        </section>
-    </main>
 
-    <!-- Script for Theme Toggle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const iconDark = document.getElementById('theme-icon-dark');
-            const iconLight = document.getElementById('theme-icon-light');
+        </div>
+    </div><!-- end .notes-panel -->
 
-            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-            if (currentTheme === 'dark') {
-                iconLight.style.display = 'block';
-            } else {
-                iconDark.style.display = 'block';
-            }
+</div><!-- end .app-shell -->
 
-            themeToggleBtn.addEventListener('click', () => {
-                const current = document.documentElement.getAttribute('data-theme');
-                if (current === 'dark') {
-                    document.documentElement.setAttribute('data-theme', 'light');
-                    localStorage.setItem('theme', 'light');
-                    iconLight.style.display = 'none';
-                    iconDark.style.display = 'block';
-                } else {
-                    document.documentElement.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                    iconDark.style.display = 'none';
-                    iconLight.style.display = 'block';
-                }
-            });
+<!-- Theme toggle script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('theme-toggle');
+        const iconDark = document.getElementById('theme-icon-dark');
+        const iconLight = document.getElementById('theme-icon-light');
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        (current === 'dark' ? iconLight : iconDark).style.display = 'block';
+        btn.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            iconDark.style.display = isDark ? 'block' : 'none';
+            iconLight.style.display = isDark ? 'none' : 'block';
         });
-    </script>
+    });
+</script>
 
-    <!-- Script to render markdown previews on the index page -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Find all elements that contain raw markdown text
-            const previewTargets = document.querySelectorAll('.markdown-preview-target');
-
-            previewTargets.forEach(target => {
-                // Get the raw text
-                const rawMarkdown = target.textContent;
-                // Find the adjacent div meant for rendered HTML
-                const renderDiv = target.nextElementSibling;
-                // Parse and inject
-                if (renderDiv) {
-                    renderDiv.innerHTML = marked.parse(rawMarkdown);
-                }
-            });
+<!-- Markdown preview script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.markdown-preview-target').forEach(target => {
+            const renderDiv = target.nextElementSibling;
+            if (renderDiv) renderDiv.innerHTML = marked.parse(target.textContent);
         });
-    </script>
+    });
+</script>
+
 </body>
-
 </html>

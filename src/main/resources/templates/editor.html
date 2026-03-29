@@ -30,6 +30,7 @@
         </h2>
 
         <form th:action="@{/new}" method="get" class="search-form" th:if="${note.id == null}">
+            <input type="hidden" name="folderId" th:if="${folderId != null}" th:value="${folderId}">
             <div class="search-input-wrapper">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" class="search-icon">
@@ -50,6 +51,7 @@
         </form>
 
         <form th:action="@{/edit/{id}(id=${note.id})}" method="get" class="search-form" th:if="${note.id != null}">
+            <input type="hidden" name="folderId" th:if="${folderId != null}" th:value="${folderId}">
             <div class="search-input-wrapper">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round" class="search-icon">
@@ -89,7 +91,16 @@
                     <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                 </svg>
             </button>
-            <a href="/new" class="btn btn-primary">
+            <a th:if="${selectedFolderId == null or selectedFolderId == 0}" href="/new" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                New Note
+            </a>
+            <a th:if="${selectedFolderId != null and selectedFolderId != 0}" th:href="@{/new(folderId=${selectedFolderId})}"
+                class="btn btn-primary">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -106,20 +117,34 @@
             <h3>Directory</h3>
             <ul class="note-list">
                 <li th:each="n : ${notes}">
-                    <a th:href="@{/edit/{id}(id=${n.id})}" th:text="${n.title}"
-                        th:style="${note.id == n.id ? 'background: rgba(255,255,255,0.1); color: #fff; font-weight: 500;' : ''}">Note
-                        Title</a>
+                    <a th:href="@{/edit/{id}(id=${n.id})}"
+                        th:style="${note.id == n.id ? 'background: rgba(255,255,255,0.1); color: #fff; font-weight: 500;' : ''}">
+                        <span class="note-accent-dot" th:if="${n.accentColor != null}"
+                            th:style="|background-color: ${n.accentColor}|"></span>
+                        <span th:text="${n.title}">Note Title</span>
+                    </a>
                 </li>
             </ul>
         </aside>
 
         <!-- Main Workspace -->
         <main class="workspace">
-            <form th:action="@{/save}" th:object="${note}" method="post" class="editor-form">
+            <form th:action="@{/save}" th:object="${note}" method="post" class="editor-form" id="editor-save-form">
                 <input type="hidden" th:field="*{id}">
 
                 <div class="toolbar">
-                    <input type="text" th:field="*{title}" placeholder="Untitled Note" required class="title-input">
+                    <div class="toolbar-main">
+                        <input type="text" th:field="*{title}" placeholder="Untitled Note" required class="title-input">
+                        <div class="toolbar-folder-wrap">
+                            <label for="note-folder-select" class="sr-only">Folder</label>
+                            <select name="folderId" id="note-folder-select" class="folder-select">
+                                <option value=""
+                                    th:selected="${selectedFolderId == null or selectedFolderId == 0}">No folder</option>
+                                <option th:each="f : ${folders}" th:value="${f.id}" th:text="${f.name}"
+                                    th:selected="${selectedFolderId != null and selectedFolderId == f.id}"></option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="toolbar-actions">
                         <a th:if="${note.id != null}" th:href="@{/delete/{id}(id=${note.id})}" class="btn btn-danger"
                             title="Delete Note">

@@ -8,5 +8,14 @@ import java.util.List;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
+
     List<Note> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(String titleKeyword, String contentKeyword);
+
+    List<Note> findAllByOrderByUpdatedAtDesc();
+
+    List<Note> findByFolderIsNullOrderByUpdatedAtDesc();
+
+    List<Note> findByFolderIdOrderByUpdatedAtDesc(Long folderId);
+
+    List<Note> findByFolderId(Long folderId);
 }
