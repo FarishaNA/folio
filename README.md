@@ -13,7 +13,7 @@ For deeper architecture and change history, see [`documentation.md`](./documenta
 | Layer | Technology |
 |---|---|
 | Language | Java 17+ |
-| Framework | Spring Boot 3.x |
+| Framework | Spring Boot 4.x |
 | Web / Routing | Spring Web MVC |
 | Templating | Thymeleaf |
 | ORM | Spring Data JPA (Hibernate) |

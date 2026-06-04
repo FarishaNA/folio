@@ -19,7 +19,7 @@ The application targets a clean, professional aesthetic similar to modern note-t
 | Technology | Role |
 |---|---|
 | Java 17+ | Core language |
-| Spring Boot 3.x | Application framework, auto-configuration |
+| Spring Boot 4.x | Application framework, auto-configuration |
 | Spring Web MVC | HTTP routing, controller layer |
 | Spring Data JPA | ORM abstraction over Hibernate |
 | H2 Database | Embedded SQL DB; file-based for runtime, in-memory for tests |
@@ -138,7 +138,7 @@ public class Folder {
     @Column(nullable = false, length = 120)
     private String name;
 
-    @OneToMany(mappedBy = "folder", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "folder")
     private List<Note> notes = new ArrayList<>();
     // getters and setters
 }
@@ -146,8 +146,7 @@ public class Folder {
 
 - `@Entity` tells Hibernate to create a `folders` table.
 - `@GeneratedValue(IDENTITY)` means the database auto-increments the primary key.
-- `@OneToMany(mappedBy = "folder")` declares the inverse side of the relationship. The `Note` entity owns the foreign key column; Folder just navigates back to its notes.
-- `FetchType.LAZY` means Hibernate does not load the notes list unless it is explicitly accessed.
+- `@OneToMany(mappedBy = "folder")` declares the inverse side of the relationship. The `Note` entity owns the foreign key column; Folder just navigates back to its notes. Since it is `@OneToMany`, the fetch type defaults to `LAZY` under Hibernate.
 
 ---
 
@@ -173,10 +172,11 @@ private Folder folder;
 ```java
 private static final String[] ACCENT_PALETTE = {
     "#e57373", "#f06292", "#ba68c8", "#9575cd", "#7986cb",
-    "#64b5f6", "#4db6ac", "#81c784", "#ffb74d", "#ff8a65"
+    "#64b5f6", "#4dd0e1", "#4db6ac", "#81c784", "#aed581",
+    "#dce775", "#ffd54f", "#ffb74d", "#ff8a65"
 };
 
-@Column(length = 20)
+@Column(length = 7)
 private String accentColor;
 
 public static String randomAccentColor() {
@@ -184,8 +184,8 @@ public static String randomAccentColor() {
 }
 ```
 
-- `ACCENT_PALETTE` is a fixed array of ten hex color strings. Having a fixed palette keeps the visual result consistent — random hex values would produce ugly, clashing colors.
-- `accentColor` is stored in a `VARCHAR(20)` column.
+- `ACCENT_PALETTE` is a fixed array of fourteen hex color strings. Having a fixed palette keeps the visual result consistent — random hex values would produce ugly, clashing colors.
+- `accentColor` is stored in a `VARCHAR(7)` column (sufficient for standard 7-character hex color values like `#e57373`).
 - `randomAccentColor()` is a static helper used when creating new notes.
 - `ThreadLocalRandom` is used instead of `Math.random()` because it is faster in multi-threaded server environments.
 
@@ -376,7 +376,9 @@ public String listNotes(@RequestParam(required = false) Long folderId,
 public String saveNote(@ModelAttribute("note") Note note,
                        @RequestParam(required = false) Long folderId) {
     noteService.saveNote(note, folderId);
-    if (folderId != null && folderId > 0) return "redirect:/?folderId=" + folderId;
+    if (folderId != null && folderId > 0) {
+        return "redirect:/?folderId=" + folderId;
+    }
     return "redirect:/";
 }
 ```
@@ -416,21 +418,27 @@ Uses `@PathVariable` to extract the folder id from the URL. Delegates all logic 
 ```java
 @Component
 public class AccentColorBackfill implements CommandLineRunner {
+
+    private final NoteRepository noteRepository;
+
+    public AccentColorBackfill(NoteRepository noteRepository) {
+        this.noteRepository = noteRepository;
+    }
+
     @Override
     public void run(String... args) {
-        List<Note> notes = noteRepository.findAll();
-        for (Note note : notes) {
+        noteRepository.findAll().forEach(note -> {
             if (note.getAccentColor() == null || note.getAccentColor().isBlank()) {
                 note.setAccentColor(Note.randomAccentColor());
                 noteRepository.save(note);
             }
-        }
+        });
     }
 }
 ```
 
 - `CommandLineRunner` is a Spring Boot interface whose `run()` method is called once immediately after the application context starts.
-- The loop finds any note that does not have a color assigned (e.g. notes created before the feature existed or after a schema reset) and assigns one from the palette.
+- The startup task finds any note that does not have a color assigned (e.g. notes created before the feature existed or after a schema reset) and assigns one from the palette using `noteRepository.save(note)`.
 - Without this, existing notes would have a `null` `accentColor` and no border on their card — visually inconsistent with newly created notes.
 
 ---
