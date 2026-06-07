@@ -3,60 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${note.title != null and note.title != ''} ? ${note.title} + ' — IndroVid' : 'New Note — IndroVid'">Note — IndroVid</title>
+    <title th:text="${note.title != null and note.title != ''} ? ${note.title} + ' — Folio' : 'New Note — Folio'">Folio</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <script th:src="@{https://cdn.jsdelivr.net/npm/marked/marked.min.js}"></script>
     <script>
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+        const t = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
     </script>
 </head>
 <body>
 
 <nav class="navbar">
     <h2>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-            <polyline points="14 2 14 8 20 8"/>
-        </svg>
-        <a href="/" style="color:inherit;text-decoration:none;">IndroVid</a>
+        <a href="/" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
+            Folio<span class="logo-dot"></span>
+        </a>
     </h2>
 
-    <form th:action="@{/new}" method="get" class="search-form" th:if="${note.id == null}" style="flex:1;max-width:320px;">
-        <input type="hidden" name="folderId" th:if="${folderId != null}" th:value="${folderId}">
+    <form th:action="@{/new}" method="get" class="search-form" th:if="${note.id == null}" style="flex:1;max-width:280px;margin-left:16px;">
         <div class="search-input-wrapper">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" class="search-icon">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search notes…" class="search-input">
+        </div>
+        <button type="submit" style="display:none;">Search</button>
+    </form>
+    <form th:action="@{/edit/{id}(id=${note.id})}" method="get" class="search-form" th:if="${note.id != null}" style="flex:1;max-width:280px;margin-left:16px;">
+        <div class="search-input-wrapper">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" name="keyword" th:value="${keyword}" placeholder="Search notes…" class="search-input">
         </div>
         <button type="submit" style="display:none;">Search</button>
     </form>
 
-    <form th:action="@{/edit/{id}(id=${note.id})}" method="get" class="search-form" th:if="${note.id != null}" style="flex:1;max-width:320px;">
-        <input type="hidden" name="folderId" th:if="${folderId != null}" th:value="${folderId}">
-        <div class="search-input-wrapper">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                 stroke-linecap="round" stroke-linejoin="round" class="search-icon">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            </svg>
-            <input type="text" name="keyword" th:value="${keyword}" placeholder="Search notes…" class="search-input">
-        </div>
-        <button type="submit" style="display:none;">Search</button>
-    </form>
-
-    <div style="display:flex;gap:0.5rem;align-items:center;margin-left:auto;">
-        <button id="theme-toggle" class="btn btn-icon" title="Toggle theme">
-            <svg id="theme-icon-dark" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            <svg id="theme-icon-light" style="display:none;" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <div style="display:flex;gap:6px;align-items:center;margin-left:auto;">
+        <button id="theme-toggle" class="btn-icon" title="Toggle theme">
+            <svg id="theme-icon-dark" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg id="theme-icon-light" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
         <a th:if="${selectedFolderId == null or selectedFolderId == 0}" href="/new" class="btn btn-primary">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             New Note
         </a>
         <a th:if="${selectedFolderId != null and selectedFolderId != 0}" th:href="@{/new(folderId=${selectedFolderId})}" class="btn btn-primary">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             New Note
         </a>
     </div>
@@ -64,69 +53,85 @@
 
 <div class="main-layout">
 
+    <!-- Sidebar -->
     <aside class="sidebar">
         <h3>Notes</h3>
         <ul class="note-list">
             <li th:each="n : ${notes}">
-                <a th:href="@{/edit/{id}(id=${n.id})}"
-                   th:classappend="${note.id == n.id} ? ' active-note' : ''">
-                    <span class="note-accent-dot" th:if="${n.accentColor != null}"
-                          th:style="|background-color: ${n.accentColor}|"></span>
+                <a th:href="@{/edit/{id}(id=${n.id})}" th:classappend="${note.id == n.id} ? ' active-note' : ''">
+                    <span class="note-accent-dot" th:if="${n.accentColor != null}" th:style="|background-color: ${n.accentColor}|"></span>
                     <span th:text="${n.title}" style="overflow:hidden;text-overflow:ellipsis;">Note</span>
                 </a>
             </li>
         </ul>
+        <div class="sidebar-new-note">
+            <a th:if="${selectedFolderId == null or selectedFolderId == 0}" href="/new">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Note
+            </a>
+            <a th:if="${selectedFolderId != null and selectedFolderId != 0}" th:href="@{/new(folderId=${selectedFolderId})}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Note
+            </a>
+        </div>
     </aside>
 
+    <!-- Workspace -->
     <main class="workspace">
         <form th:action="@{/save}" th:object="${note}" method="post" class="editor-form" id="editor-save-form">
             <input type="hidden" th:field="*{id}">
 
+            <!-- Toolbar -->
             <div class="toolbar">
                 <div class="toolbar-main">
-                    <input type="text" th:field="*{title}" placeholder="Untitled note…" required class="title-input">
+                    <input type="text" th:field="*{title}" placeholder="Untitled" required class="title-input">
 
-                    <label class="folder-chip">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                        <select name="folderId" id="note-folder-select">
-                            <option value="" th:selected="${selectedFolderId == null or selectedFolderId == 0}">No folder</option>
-                            <option th:each="f : ${folders}" th:value="${f.id}" th:text="${f.name}"
-                                    th:selected="${selectedFolderId != null and selectedFolderId == f.id}"></option>
-                        </select>
-                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                    </label>
+                    <!-- Hidden native select for form submission -->
+                    <select name="folderId" id="note-folder-select" style="display:none;">
+                        <option value="" th:selected="${selectedFolderId == null or selectedFolderId == 0}">No folder</option>
+                        <option th:each="f : ${folders}" th:value="${f.id}" th:text="${f.name}"
+                                th:selected="${selectedFolderId != null and selectedFolderId == f.id}"></option>
+                    </select>
+
+                    <!-- Custom folder chip -->
+                    <div class="folder-chip" id="folder-chip-btn" tabindex="0">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                        <span id="folder-chip-label">No folder</span>
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        <div class="folder-dropdown-menu" id="folder-dropdown-menu"></div>
+                    </div>
                 </div>
 
                 <div class="toolbar-actions">
                     <a th:if="${note.id != null}" th:href="@{/delete/{id}(id=${note.id})}" class="btn-delete"
-                       title="Delete note" onclick="return confirm('Delete this note? This cannot be undone.');">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                       title="Delete note" onclick="return confirm('Delete this note?');">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </a>
 
-                    <div class="save-dropdown" id="save-dropdown">
-                        <button type="submit" class="save-main-btn" title="Save Note">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    <div class="save-dropdown">
+                        <button type="submit" class="save-main-btn">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                             Save
                         </button>
-                        <button type="button" class="save-caret" id="save-caret-btn" title="Export options">
+                        <button type="button" class="save-caret" id="save-caret-btn">
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
                         </button>
                         <div class="save-menu" id="save-menu">
                             <button type="button" class="save-menu-item" id="dl-pdf">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                                 Download as PDF
                             </button>
                             <button type="button" class="save-menu-item" id="dl-html">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
                                 Download as HTML
                             </button>
                             <button type="button" class="save-menu-item" id="dl-md">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                 Download as .md
                             </button>
                             <div class="save-menu-divider"></div>
-                            <button type="button" class="save-menu-item" id="copy-md-menu">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <button type="button" class="save-menu-item" id="copy-md-btn">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                                 Copy Markdown
                             </button>
                         </div>
@@ -134,16 +139,16 @@
                 </div>
             </div>
 
-            <!-- Formatting toolbar -->
+            <!-- Format toolbar -->
             <div class="format-toolbar" id="format-toolbar">
-                <button type="button" class="fmt-btn" data-action="h1" title="Heading 1">H1</button>
-                <button type="button" class="fmt-btn" data-action="h2" title="Heading 2">H2</button>
-                <button type="button" class="fmt-btn" data-action="h3" title="Heading 3">H3</button>
+                <button type="button" class="fmt-btn" data-action="h1">H1</button>
+                <button type="button" class="fmt-btn" data-action="h2">H2</button>
+                <button type="button" class="fmt-btn" data-action="h3">H3</button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" data-action="bold" title="Bold (Ctrl+B)">
+                <button type="button" class="fmt-btn" data-action="bold" title="Bold Ctrl+B">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
                 </button>
-                <button type="button" class="fmt-btn" data-action="italic" title="Italic (Ctrl+I)">
+                <button type="button" class="fmt-btn" data-action="italic" title="Italic Ctrl+I">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
                 </button>
                 <button type="button" class="fmt-btn" data-action="strikethrough" title="Strikethrough">
@@ -167,14 +172,12 @@
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
                 </button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" data-action="link" title="Insert Link (Ctrl+K)">
+                <button type="button" class="fmt-btn" data-action="link" title="Link Ctrl+K">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                 </button>
-                <button type="button" class="fmt-btn" data-action="hr" title="Horizontal Rule">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                </button>
+                <button type="button" class="fmt-btn" data-action="hr" title="Horizontal Rule">—</button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" id="btn-fullscreen" title="Toggle Fullscreen" style="width:auto;padding:0 8px;">
+                <button type="button" class="fmt-btn" id="btn-fullscreen" title="Fullscreen" style="min-width:auto;padding:0 6px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="fs-expand"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="fs-collapse" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
                 </button>
@@ -183,57 +186,108 @@
             <!-- Split view -->
             <div class="split-view">
                 <div class="editor-panel">
-                    <textarea th:field="*{content}" id="markdown-input"
-                              placeholder="# Start writing…&#10;&#10;Type Markdown here. The preview updates live on the right."></textarea>
+                    <div class="panel-label">Markdown</div>
+                    <div class="editor-scroll-area">
+                        <div class="line-numbers" id="line-numbers"></div>
+                        <textarea th:field="*{content}" id="markdown-input"
+                                  placeholder="# Start writing…&#10;&#10;Markdown renders live on the right."></textarea>
+                    </div>
                 </div>
-                <div id="markdown-preview" class="preview-panel"></div>
+                <div class="preview-panel">
+                    <div class="panel-label">Preview</div>
+                    <div class="preview-content" id="markdown-preview"></div>
+                </div>
             </div>
 
             <!-- Status bar -->
             <div class="editor-statusbar">
-                <span style="color:var(--text-muted);">Ctrl+S save &nbsp;·&nbsp; Ctrl+B bold &nbsp;·&nbsp; Ctrl+I italic &nbsp;·&nbsp; Ctrl+K link</span>
+                <span class="statusbar-shortcuts">
+                    <kbd>⌘S</kbd> Save &nbsp;·&nbsp;
+                    <kbd>⌘B</kbd> Bold &nbsp;·&nbsp;
+                    <kbd>⌘I</kbd> Italic &nbsp;·&nbsp;
+                    <kbd>⌘K</kbd> Link
+                </span>
                 <span class="statusbar-right">
                     <span id="word-count">0 words</span>
                     <span id="char-count">0 chars</span>
                 </span>
             </div>
-
         </form>
     </main>
 </div>
 
 <!-- Theme toggle -->
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const btn       = document.getElementById('theme-toggle');
-    const iconDark  = document.getElementById('theme-icon-dark');
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('theme-toggle');
+    const iconDark = document.getElementById('theme-icon-dark');
     const iconLight = document.getElementById('theme-icon-light');
-    const current   = document.documentElement.getAttribute('data-theme') || 'light';
-
-    // Show correct icon on load
-    (current === 'dark' ? iconLight : iconDark).style.display = 'block';
-
-    btn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    (cur === 'dark' ? iconLight : iconDark).style.display = 'block';
+    btn.addEventListener('click', function() {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        const next = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
         iconDark.style.display = isDark ? 'block' : 'none';
         iconLight.style.display = isDark ? 'none' : 'block';
     });
 });
 </script>
 
-<!-- Live preview + word/char count -->
+<!-- Folder dropdown -->
 <script>
-const inputEl   = document.getElementById('markdown-input');
-const previewEl = document.getElementById('markdown-preview');
-const wordEl    = document.getElementById('word-count');
-const charEl    = document.getElementById('char-count');
+document.addEventListener('DOMContentLoaded', function() {
+    var sel   = document.getElementById('note-folder-select');
+    var chip  = document.getElementById('folder-chip-btn');
+    var label = document.getElementById('folder-chip-label');
+    var menu  = document.getElementById('folder-dropdown-menu');
+
+    if (!sel || !chip || !label || !menu) return;
+
+    function buildMenu() {
+        menu.innerHTML = '';
+        Array.from(sel.options).forEach(function(opt) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'folder-dropdown-item' + (opt.value === sel.value ? ' selected' : '');
+            btn.textContent = opt.text;
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                sel.value = opt.value;
+                label.textContent = opt.text;
+                menu.classList.remove('open');
+                buildMenu();
+            });
+            menu.appendChild(btn);
+        });
+    }
+
+    label.textContent = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : 'No folder';
+    buildMenu();
+
+    chip.addEventListener('click', function(e) {
+        e.stopPropagation();
+        menu.classList.toggle('open');
+    });
+
+    document.addEventListener('click', function() {
+        menu.classList.remove('open');
+    });
+});
+</script>
+
+<!-- Live preview + word count -->
+<script>
+var inputEl   = document.getElementById('markdown-input');
+var previewEl = document.getElementById('markdown-preview');
+var wordEl    = document.getElementById('word-count');
+var charEl    = document.getElementById('char-count');
 
 function updatePreview() {
     previewEl.innerHTML = marked.parse(inputEl.value || '');
-    const text  = inputEl.value.trim();
-    const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+    var text  = inputEl.value.trim();
+    var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
     wordEl.textContent = words + ' word' + (words !== 1 ? 's' : '');
     charEl.textContent = text.length + ' char' + (text.length !== 1 ? 's' : '');
 }
@@ -242,186 +296,168 @@ inputEl.addEventListener('input', updatePreview);
 updatePreview();
 </script>
 
-
-
-<!-- Formatting toolbar — multi-line lists, proper undo via execCommand -->
+<!-- Line numbers -->
 <script>
-(function () {
-    const ta = document.getElementById('markdown-input');
+(function() {
+    var ta = document.getElementById('markdown-input');
+    var ln = document.getElementById('line-numbers');
 
-    /* Push an undo-able change through execCommand so Ctrl+Z works */
-    function applyChange(newFullValue, newStart, newEnd) {
+    function updateLines() {
+        var lines = (ta.value.match(/\n/g) || []).length + 1;
+        var html = '';
+        for (var i = 1; i <= lines; i++) html += '<span>' + i + '</span>';
+        ln.innerHTML = html;
+        ln.scrollTop = ta.scrollTop;
+    }
+
+    ta.addEventListener('input', updateLines);
+    ta.addEventListener('scroll', function() { ln.scrollTop = ta.scrollTop; });
+    updateLines();
+})();
+</script>
+
+<!-- Formatting toolbar -->
+<script>
+(function() {
+    var ta = document.getElementById('markdown-input');
+
+    function applyChange(newVal, newStart, newEnd) {
         ta.focus();
         ta.select();
-        document.execCommand('insertText', false, newFullValue);
+        document.execCommand('insertText', false, newVal);
         ta.setSelectionRange(newStart, newEnd);
         ta.dispatchEvent(new Event('input'));
     }
 
-    /* Wrap selected text with before/after markers (inline) */
     function wrapInline(before, after, placeholder) {
-        const s   = ta.selectionStart;
-        const e   = ta.selectionEnd;
-        const sel = ta.value.substring(s, e) || placeholder;
-        const newVal = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
+        var s = ta.selectionStart, e = ta.selectionEnd;
+        var sel = ta.value.substring(s, e) || placeholder;
+        var newVal = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
         applyChange(newVal, s + before.length, s + before.length + sel.length);
     }
 
-    /* Prefix EVERY selected line with a string (block — supports multi-line) */
     function prefixLines(prefix) {
-        const s         = ta.selectionStart;
-        const e         = ta.selectionEnd;
-        const full      = ta.value;
-        const lineStart = full.lastIndexOf('\n', s - 1) + 1;
-        const lineEnd   = full.indexOf('\n', e) === -1 ? full.length : full.indexOf('\n', e);
-        const block     = full.substring(lineStart, lineEnd);
-        const prefixed  = block.split('\n').map(line => prefix + line).join('\n');
-        const newVal    = full.substring(0, lineStart) + prefixed + full.substring(lineEnd);
-        applyChange(newVal, lineStart, lineStart + prefixed.length);
+        var s = ta.selectionStart, e = ta.selectionEnd, full = ta.value;
+        var ls = full.lastIndexOf('\n', s - 1) + 1;
+        var le = full.indexOf('\n', e) === -1 ? full.length : full.indexOf('\n', e);
+        var prefixed = full.substring(ls, le).split('\n').map(function(l) { return prefix + l; }).join('\n');
+        var newVal = full.substring(0, ls) + prefixed + full.substring(le);
+        applyChange(newVal, ls, ls + prefixed.length);
     }
 
-    /* Ordered list — increments numbers per line */
     function prefixOL() {
-        const s         = ta.selectionStart;
-        const e         = ta.selectionEnd;
-        const full      = ta.value;
-        const lineStart = full.lastIndexOf('\n', s - 1) + 1;
-        const lineEnd   = full.indexOf('\n', e) === -1 ? full.length : full.indexOf('\n', e);
-        const block     = full.substring(lineStart, lineEnd);
-        let i = 1;
-        const prefixed  = block.split('\n').map(line => (i++) + '. ' + line).join('\n');
-        const newVal    = full.substring(0, lineStart) + prefixed + full.substring(lineEnd);
-        applyChange(newVal, lineStart, lineStart + prefixed.length);
+        var s = ta.selectionStart, e = ta.selectionEnd, full = ta.value;
+        var ls = full.lastIndexOf('\n', s - 1) + 1;
+        var le = full.indexOf('\n', e) === -1 ? full.length : full.indexOf('\n', e);
+        var i = 1;
+        var prefixed = full.substring(ls, le).split('\n').map(function(l) { return (i++) + '. ' + l; }).join('\n');
+        var newVal = full.substring(0, ls) + prefixed + full.substring(le);
+        applyChange(newVal, ls, ls + prefixed.length);
     }
 
-    const actions = {
-        h1:            () => prefixLines('# '),
-        h2:            () => prefixLines('## '),
-        h3:            () => prefixLines('### '),
-        bold:          () => wrapInline('**', '**', 'bold text'),
-        italic:        () => wrapInline('*',  '*',  'italic text'),
-        strikethrough: () => wrapInline('~~', '~~', 'strikethrough'),
-        inlinecode:    () => wrapInline('`',  '`',  'code'),
-        blockquote:    () => prefixLines('> '),
-        codeblock:     () => wrapInline('```\n', '\n```', 'code here'),
-        ul:            () => prefixLines('- '),
-        ol:            ()  => prefixOL(),
-        link: () => {
-            const url = prompt('Enter URL:', 'https://');
+    var actions = {
+        h1: function() { prefixLines('# '); },
+        h2: function() { prefixLines('## '); },
+        h3: function() { prefixLines('### '); },
+        bold: function() { wrapInline('**', '**', 'bold text'); },
+        italic: function() { wrapInline('*', '*', 'italic text'); },
+        strikethrough: function() { wrapInline('~~', '~~', 'strikethrough'); },
+        inlinecode: function() { wrapInline('`', '`', 'code'); },
+        blockquote: function() { prefixLines('> '); },
+        codeblock: function() { wrapInline('```\n', '\n```', 'code here'); },
+        ul: function() { prefixLines('- '); },
+        ol: function() { prefixOL(); },
+        link: function() {
+            var url = prompt('URL:', 'https://');
             if (url) wrapInline('[', '](' + url + ')', 'link text');
         },
-        hr: () => {
-            const pos  = ta.selectionStart;
-            const full = ta.value;
-            const nl   = (pos > 0 && full[pos - 1] !== '\n') ? '\n' : '';
-            const ins  = nl + '\n---\n\n';
-            const newVal = full.substring(0, pos) + ins + full.substring(pos);
+        hr: function() {
+            var pos = ta.selectionStart, full = ta.value;
+            var nl = (pos > 0 && full[pos-1] !== '\n') ? '\n' : '';
+            var ins = nl + '\n---\n\n';
+            var newVal = full.substring(0, pos) + ins + full.substring(pos);
             applyChange(newVal, pos + ins.length, pos + ins.length);
         }
     };
 
-    document.getElementById('format-toolbar').addEventListener('click', function (e) {
-        const btn = e.target.closest('[data-action]');
+    document.getElementById('format-toolbar').addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-action]');
         if (btn && actions[btn.dataset.action]) actions[btn.dataset.action]();
     });
 
-    /* Keyboard shortcuts */
-    ta.addEventListener('keydown', function (e) {
+    ta.addEventListener('keydown', function(e) {
         if (e.ctrlKey || e.metaKey) {
             if (e.key === 'b') { e.preventDefault(); actions.bold(); }
             if (e.key === 'i') { e.preventDefault(); actions.italic(); }
             if (e.key === 'k') { e.preventDefault(); actions.link(); }
+            if (e.key === 's') { e.preventDefault(); document.getElementById('editor-save-form').submit(); }
         }
     });
 
-    /* Fullscreen toggle */
-    const form       = document.getElementById('editor-save-form');
-    const fsExpand   = document.getElementById('fs-expand');
-    const fsCollapse = document.getElementById('fs-collapse');
-    document.getElementById('btn-fullscreen').addEventListener('click', () => {
-        const isFs = form.classList.toggle('is-fullscreen');
-        fsExpand.style.display   = isFs ? 'none'  : 'block';
-        fsCollapse.style.display = isFs ? 'block' : 'none';
+    var form = document.getElementById('editor-save-form');
+    document.getElementById('btn-fullscreen').addEventListener('click', function() {
+        var isFs = form.classList.toggle('is-fullscreen');
+        document.getElementById('fs-expand').style.display  = isFs ? 'none'  : 'block';
+        document.getElementById('fs-collapse').style.display = isFs ? 'block' : 'none';
     });
 })();
 </script>
 
-<!-- Save dropdown + export actions -->
+<!-- Save dropdown / export -->
 <script>
-(function () {
-    const caret = document.getElementById('save-caret-btn');
-    const menu  = document.getElementById('save-menu');
+(function() {
+    var caret = document.getElementById('save-caret-btn');
+    var menu  = document.getElementById('save-menu');
 
-    caret.addEventListener('click', function (e) {
+    caret.addEventListener('click', function(e) {
         e.stopPropagation();
         menu.classList.toggle('open');
     });
-    document.addEventListener('click', () => menu.classList.remove('open'));
+    document.addEventListener('click', function() { menu.classList.remove('open'); });
 
     function getTitle() {
-        return (document.querySelector('.title-input').value || 'note').replace(/[^a-z0-9_\-\s]/gi, '').trim() || 'note';
+        return (document.querySelector('.title-input').value || 'note').replace(/[^a-z0-9_\-\s]/gi,'').trim() || 'note';
     }
-    function getMD() {
-        return document.getElementById('markdown-input').value;
-    }
-    function downloadFile(content, filename, mime) {
-        const blob = new Blob([content], { type: mime });
-        const a    = document.createElement('a');
-        a.href     = URL.createObjectURL(blob);
+    function getMD() { return document.getElementById('markdown-input').value; }
+    function download(content, filename, mime) {
+        var blob = new Blob([content], { type: mime });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
         a.download = filename;
         a.click();
         URL.revokeObjectURL(a.href);
     }
 
-    document.getElementById('dl-md').addEventListener('click', () => {
-        downloadFile(getMD(), getTitle() + '.md', 'text/markdown');
+    document.getElementById('dl-md').addEventListener('click', function() {
+        download(getMD(), getTitle() + '.md', 'text/markdown');
         menu.classList.remove('open');
     });
 
-    document.getElementById('dl-html').addEventListener('click', () => {
-        const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${getTitle()}</title>
-<style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}
-pre{background:#f4f4f4;padding:1rem;border-radius:6px;overflow-x:auto;}
-code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}
-blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style>
-</head><body>${marked.parse(getMD())}</body></html>`;
-        downloadFile(html, getTitle() + '.html', 'text/html');
+    document.getElementById('dl-html').addEventListener('click', function() {
+        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + getTitle() + '</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}pre{background:#f4f4f4;padding:1rem;border-radius:6px;}code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style></head><body>' + marked.parse(getMD()) + '</body></html>';
+        download(html, getTitle() + '.html', 'text/html');
         menu.classList.remove('open');
     });
 
-    document.getElementById('dl-pdf').addEventListener('click', () => {
-        const w = window.open('', '_blank');
-        w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${getTitle()}</title>
-<style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}
-pre{background:#f4f4f4;padding:1rem;border-radius:6px;overflow-x:auto;}
-code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}
-blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style>
-</head><body>${marked.parse(getMD())}</body></html>`);
+    document.getElementById('dl-pdf').addEventListener('click', function() {
+        var w = window.open('', '_blank');
+        w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + getTitle() + '</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}pre{background:#f4f4f4;padding:1rem;border-radius:6px;}code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style></head><body>' + marked.parse(getMD()) + '</body></html>');
         w.document.close();
         w.focus();
-        setTimeout(() => { w.print(); w.close(); }, 300);
+        setTimeout(function() { w.print(); w.close(); }, 300);
         menu.classList.remove('open');
     });
 
-    document.getElementById('copy-md-menu').addEventListener('click', function () {
-        navigator.clipboard.writeText(getMD()).then(() => {
-            const orig = this.innerHTML;
-            this.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
-            setTimeout(() => { this.innerHTML = orig; }, 1500);
+    document.getElementById('copy-md-btn').addEventListener('click', function() {
+        var self = this;
+        navigator.clipboard.writeText(getMD()).then(function() {
+            var orig = self.innerHTML;
+            self.innerHTML = '✓ Copied!';
+            setTimeout(function() { self.innerHTML = orig; }, 1500);
             menu.classList.remove('open');
         });
     });
 })();
-</script>
-
-<!-- Ctrl+S to save -->
-<script>
-document.addEventListener('keydown', function (e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        document.getElementById('editor-save-form').submit();
-    }
-});
 </script>
 
 </body>
