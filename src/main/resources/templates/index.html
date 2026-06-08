@@ -11,74 +11,92 @@
         document.documentElement.setAttribute('data-theme', t);
     </script>
 </head>
-<body>
-
+<body class="app-body">
 <div class="app-shell">
 
     <!-- Sidebar -->
-    <aside class="folders-sidebar">
-        <div class="sidebar-header">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            Folders
-        </div>
-
-        <nav class="folder-nav">
-            <a th:href="@{/}" class="folder-nav-item" th:classappend="${folderId == null} ? ' is-active' : ''">
-                <span class="folder-label">
-                    <svg class="folder-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-                    <span>All Notes</span>
+    <aside class="app-sidebar">
+        <div class="sidebar-top">
+            <a href="/" class="sidebar-logo">
+                <div class="logo-box">F.</div>
+                Folio
+            </a>
+            <a href="/" class="sidebar-nav-item" th:classappend="${folderId == null and keyword == null} ? ' active' : ''">
+                <span class="nav-left">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    Home
                 </span>
             </a>
-            <a th:href="@{/(folderId=0)}" class="folder-nav-item" th:classappend="${folderId != null and folderId == 0} ? ' is-active' : ''">
-                <span class="folder-label">
-                    <svg class="folder-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-                    <span>Uncategorized</span>
+            <a th:href="@{/}" class="sidebar-nav-item">
+                <span class="nav-left">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    All Notes
+                </span>
+                <span class="nav-count" th:text="${totalNotes}">0</span>
+            </a>
+        </div>
+
+        <div class="sidebar-scroll">
+            <div class="sidebar-section-label">
+                Folders
+                <button title="New folder" onclick="document.getElementById('new-folder-input').focus()">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+            </div>
+            <a th:href="@{/(folderId=0)}" class="sidebar-nav-item" th:classappend="${folderId != null and folderId == 0} ? ' active' : ''">
+                <span class="nav-left">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                    Uncategorized
                 </span>
             </a>
             <th:block th:each="f : ${folders}">
-                <a th:href="@{/(folderId=${f.id})}" class="folder-nav-item" th:classappend="${folderId != null and folderId == f.id} ? ' is-active' : ''">
-                    <span class="folder-label">
-                        <svg class="folder-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                <a th:href="@{/(folderId=${f.id})}" class="sidebar-nav-item" th:classappend="${folderId != null and folderId == f.id} ? ' active' : ''">
+                    <span class="nav-left">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                         <span th:text="${f.name}">Folder</span>
                     </span>
-                    <a th:href="@{/folders/delete/{id}(id=${f.id})}" class="folder-delete-btn"
-                       th:title="'Delete ' + ${f.name}"
-                       onclick="return confirm('Delete this folder? Notes will become Uncategorized.');">
+                    <a th:href="@{/folders/delete/{id}(id=${f.id})}" style="opacity:0;color:var(--text-muted);display:flex;align-items:center;padding:2px;border-radius:3px;"
+                       class="folder-delete-btn" onclick="return confirm('Delete folder?');">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </a>
                 </a>
             </th:block>
-        </nav>
+        </div>
 
-        <div class="sidebar-footer">
-            <form th:action="@{/folders}" method="post" class="folder-create-form">
-                <input type="text" name="name" placeholder="New folder…" maxlength="120" class="folder-name-input">
-                <button type="submit" class="btn-folder-add" title="Create folder">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <div class="sidebar-bottom">
+            <form th:action="@{/folders}" method="post" style="display:flex;gap:5px;margin-bottom:8px;">
+                <input type="text" id="new-folder-input" name="name" placeholder="New folder…" maxlength="120" class="folder-name-input">
+                <button type="submit" class="btn-folder-add">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 </button>
             </form>
+            <a th:if="${folderId == null or folderId == 0}" href="/new" class="btn-new-note">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Note
+            </a>
+            <a th:if="${folderId != null and folderId != 0}" th:href="@{/new(folderId=${folderId})}" class="btn-new-note">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                New Note
+            </a>
         </div>
     </aside>
 
-    <!-- Notes panel -->
-    <div class="notes-panel">
-        <div class="notes-topbar">
-            <a href="/" class="app-title">
-                Folio<span class="logo-dot"></span>
-            </a>
-
+    <!-- Main content -->
+    <div class="dashboard-layout">
+        <!-- Topbar -->
+        <div class="app-topbar">
             <form th:action="@{/}" method="get" class="search-form">
                 <input type="hidden" name="folderId" th:if="${folderId != null}" th:value="${folderId}">
                 <div class="search-input-wrapper">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     <input type="text" name="keyword" th:value="${keyword}" placeholder="Search notes…" class="search-input">
+                    <span class="search-kbd">⌘K</span>
                 </div>
                 <button type="submit" style="display:none;">Search</button>
-                <a th:if="${keyword != null and keyword != ''}" href="/" class="clear-search" title="Clear">
+                <a th:if="${keyword != null and keyword != ''}" href="/" class="clear-search">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </a>
             </form>
-
             <div style="display:flex;gap:6px;align-items:center;margin-left:auto;">
                 <button id="theme-toggle" class="btn-icon" title="Toggle theme">
                     <svg id="theme-icon-dark" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -92,43 +110,127 @@
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     New Note
                 </a>
+                <div class="user-avatar" th:if="${userName != null}" th:title="${userName}">
+                    <img th:if="${userAvatar != null}" th:src="${userAvatar}" th:alt="${userName}">
+                    <span th:if="${userAvatar == null}" th:text="${#strings.substring(userName,0,1).toUpperCase()}">U</span>
+                </div>
             </div>
         </div>
 
-        <div class="notes-content">
-            <!-- Empty state -->
-            <div th:if="${#lists.isEmpty(notes)}" class="empty-state">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8" th:if="${keyword != null and keyword != ''}"/>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" th:if="${keyword != null and keyword != ''}"/>
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" th:if="${keyword == null or keyword == ''}"/>
-                    <polyline points="14 2 14 8 20 8" th:if="${keyword == null or keyword == ''}"/>
-                </svg>
-                <p th:if="${keyword != null and keyword != ''}">No notes matching "<strong th:text="${keyword}">…</strong>"</p>
-                <p th:if="${keyword == null or keyword == ''}">No notes yet.</p>
-                <div style="display:flex;gap:6px;">
-                    <a th:if="${keyword != null and keyword != ''}" href="/" class="btn btn-outline">Clear</a>
-                    <a th:if="${folderId == null or folderId == 0}" href="/new" class="btn btn-primary">Create note</a>
-                    <a th:if="${folderId != null and folderId != 0}" th:href="@{/new(folderId=${folderId})}" class="btn btn-primary">Create note</a>
-                </div>
+        <!-- Dashboard or notes grid -->
+        <div class="dashboard-body">
+            <div class="dashboard-main">
+
+                <!-- Show dashboard when no search/folder filter -->
+                <th:block th:if="${keyword == null and folderId == null}">
+                    <div class="dashboard-greeting">
+                        <h1>Good <span th:text="${greeting}">morning</span>, <span th:text="${userName != null} ? ${userName.split(' ')[0]} : 'there'">there</span>. 👋</h1>
+                        <p>Here's an overview of your workspace.</p>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div class="stat-value" th:text="${totalNotes}">0</div>
+                            <div class="stat-label">Total Notes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                            </div>
+                            <div class="stat-value" th:text="${totalFolders}">0</div>
+                            <div class="stat-label">Folders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+                            </div>
+                            <div class="stat-value" th:text="${totalWords}">0</div>
+                            <div class="stat-label">Total Words</div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">
+                        <span class="section-title">Quick Access</span>
+                        <a th:href="@{/(folderId=0)}" class="section-link">View all →</a>
+                    </div>
+
+                    <div class="quick-access-grid" th:if="${!#lists.isEmpty(recentNotes)}">
+                        <th:block th:each="n : ${recentNotes}">
+                            <a th:href="@{/edit/{id}(id=${n.id})}" class="quick-card">
+                                <div class="quick-card-icon">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                </div>
+                                <div class="quick-card-title" th:text="${n.title}">Title</div>
+                                <div class="quick-card-meta" th:text="${#temporals.format(n.updatedAt,'MMM d · h:mm a')}">date</div>
+                                <div class="quick-card-preview" th:text="${n.content}">preview</div>
+                            </a>
+                        </th:block>
+                    </div>
+
+                    <div th:if="${#lists.isEmpty(recentNotes)}" class="empty-state" style="padding:40px 0;">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        <p>No notes yet.</p>
+                        <a href="/new" class="btn btn-primary">Create your first note</a>
+                    </div>
+                </th:block>
+
+                <!-- Notes grid for folder/search views -->
+                <th:block th:if="${keyword != null or folderId != null}">
+                    <div class="empty-state" th:if="${#lists.isEmpty(notes)}">
+                        <p th:if="${keyword != null}">No notes matching "<strong th:text="${keyword}">…</strong>"</p>
+                        <p th:if="${keyword == null}">No notes in this folder.</p>
+                        <a href="/new" class="btn btn-primary">Create note</a>
+                    </div>
+                    <ul th:if="${!#lists.isEmpty(notes)}" class="notes-grid">
+                        <li th:each="n : ${notes}">
+                            <a th:href="@{/edit/{id}(id=${n.id})}" class="note-card-link"
+                               th:styleappend="${n.accentColor != null} ? |border-left-color: ${n.accentColor}| : 'border-left-color: var(--border)'">
+                                <div class="note-card-header">
+                                    <span class="note-title-row"><strong th:text="${n.title}">Title</strong></span>
+                                    <span class="note-meta" th:text="${#temporals.format(n.updatedAt,'dd MMM yyyy · HH:mm')}">date</span>
+                                </div>
+                                <div class="note-preview markdown-preview-target" th:text="${n.content}" style="display:none;"></div>
+                                <div class="note-preview" th:id="'p-'+${n.id}"></div>
+                            </a>
+                        </li>
+                    </ul>
+                </th:block>
             </div>
 
-            <!-- Cards -->
-            <ul th:if="${!#lists.isEmpty(notes)}" class="notes-grid">
-                <li th:each="n : ${notes}">
-                    <a th:href="@{/edit/{id}(id=${n.id})}" class="note-card-link"
-                       th:styleappend="${n.accentColor != null} ? |border-left-color: ${n.accentColor}| : 'border-left-color: var(--border)'">
-                        <div class="note-card-header">
-                            <span class="note-title-row">
-                                <strong th:text="${n.title}">Title</strong>
-                            </span>
-                            <span class="note-meta" th:text="${#temporals.format(n.updatedAt, 'dd MMM yyyy · HH:mm')}">date</span>
-                        </div>
-                        <div class="note-preview markdown-preview-target" th:text="${n.content}" style="display:none;"></div>
-                        <div class="note-preview" th:id="'preview-' + ${n.id}"></div>
-                    </a>
-                </li>
-            </ul>
+            <!-- Right panel -->
+            <div class="dashboard-right">
+                <div>
+                    <div class="right-section-title">Recent Notes</div>
+                    <th:block th:each="n : ${recentNotes}">
+                        <a th:href="@{/edit/{id}(id=${n.id})}" class="recent-note-item">
+                            <div class="recent-note-icon">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            </div>
+                            <div class="recent-note-info">
+                                <div class="recent-note-title" th:text="${n.title}">Title</div>
+                                <div class="recent-note-time" th:text="${#temporals.format(n.updatedAt,'h:mm a')}">time</div>
+                            </div>
+                        </a>
+                    </th:block>
+                    <p th:if="${#lists.isEmpty(recentNotes)}" style="font-size:0.775rem;color:var(--text-muted);">No notes yet.</p>
+                </div>
+                <div>
+                    <div class="right-section-title">Pinned Notes</div>
+                    <th:block th:each="n : ${pinnedNotes}">
+                        <a th:href="@{/edit/{id}(id=${n.id})}" class="pinned-note-item">
+                            <div class="pinned-note-left">
+                                <span class="pinned-note-title" th:text="${n.title}">Title</span>
+                                <span class="pinned-folder-tag" th:if="${n.folder != null}" th:text="${n.folder.name}">Folder</span>
+                            </div>
+                            <svg class="pin-icon" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        </a>
+                    </th:block>
+                    <p th:if="${#lists.isEmpty(pinnedNotes)}" style="font-size:0.775rem;color:var(--text-muted);">No pinned notes.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -148,10 +250,10 @@ document.addEventListener('DOMContentLoaded', function() {
         iconDark.style.display = isDark ? 'block' : 'none';
         iconLight.style.display = isDark ? 'none' : 'block';
     });
-
+    // Render markdown previews on note cards
     document.querySelectorAll('.markdown-preview-target').forEach(function(el) {
-        const out = document.getElementById(el.id ? el.id.replace('preview-target-', 'preview-') : null) || el.nextElementSibling;
-        if (out) out.innerHTML = marked.parse(el.textContent || '');
+        const id = el.closest('li').querySelector('[id^="p-"]');
+        if (id) id.innerHTML = marked.parse((el.textContent || '').substring(0, 200));
     });
 });
 </script>

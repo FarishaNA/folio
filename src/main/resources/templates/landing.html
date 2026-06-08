@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folio — Markdown, beautifully simple.</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="landing-body">
+
+<nav class="landing-nav">
+    <div class="landing-logo">
+        <div class="logo-box">F.</div>
+        Folio
+    </div>
+    <ul class="landing-nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#about">About</a></li>
+    </ul>
+    <!-- Sign in with Google -->
+    <a th:href="@{/dashboard}" class="btn-landing-ghost" style="padding: 8px 20px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+    </a>
+</nav>
+
+<section class="landing-hero">
+    <p class="landing-eyebrow">Markdown, beautifully simple.</p>
+    <h1 class="landing-headline">Thoughts, organized.<br><em>Writing, elevated.</em></h1>
+    <p class="landing-subheadline">Folio is a markdown note-taking app built for clarity, focus, and long-term thinking. Write more. Think better.</p>
+    <div class="landing-ctas">
+        <a th:href="@{/dashboard}" class="btn-landing-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Start for Free
+        </a>
+        <a href="#features" class="btn-landing-ghost">View Features</a>
+    </div>
+</section>
+
+<section class="landing-features" id="features">
+    <div class="feature-block">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        <div class="feature-title">Markdown First</div>
+        <div class="feature-desc">Write in Markdown, stay in flow. Live split preview so you always see exactly what you're creating.</div>
+    </div>
+    <div class="feature-block">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        <div class="feature-title">Organize Effortlessly</div>
+        <div class="feature-desc">Folders, search, and a clean sidebar. Find any note instantly. No clutter, no friction.</div>
+    </div>
+    <div class="feature-block">
+        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        <div class="feature-title">Export Anywhere</div>
+        <div class="feature-desc">Download as PDF, HTML, or raw Markdown. Your notes, your format, wherever you need them.</div>
+    </div>
+</section>
+
+<div class="landing-trust">
+    <p class="trust-label">Trusted by thinkers, builders, and writers</p>
+    <div class="trust-logos">
+        <span class="trust-logo">◈ Hashnode</span>
+        <span class="trust-logo">⌘ Linear</span>
+        <span class="trust-logo">▲ Vercel</span>
+        <span class="trust-logo">⬡ GitHub</span>
+        <span class="trust-logo">◭ Tailwind</span>
+    </div>
+</div>
+
+<footer class="landing-footer">
+    <span class="landing-footer-text">© 2025 Folio. Built with care.</span>
+    <span class="landing-footer-text">Made for writers who mean it.</span>
+</footer>
+
+</body>
+</html>

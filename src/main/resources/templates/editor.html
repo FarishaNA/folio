@@ -11,12 +11,13 @@
         document.documentElement.setAttribute('data-theme', t);
     </script>
 </head>
-<body>
+<body class="app-body">
 
-<nav class="navbar">
+<nav class="editor-navbar">
     <h2>
-        <a href="/" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:6px;">
-            Folio<span class="logo-dot"></span>
+        <a href="/" style="color:inherit;text-decoration:none;display:flex;align-items:center;gap:8px;">
+            <div class="logo-box">F.</div>
+            Folio
         </a>
     </h2>
 
@@ -40,43 +41,43 @@
             <svg id="theme-icon-dark" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             <svg id="theme-icon-light" style="display:none;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
         </button>
-        <a th:if="${selectedFolderId == null or selectedFolderId == 0}" href="/new" class="btn btn-primary">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Note
-        </a>
-        <a th:if="${selectedFolderId != null and selectedFolderId != 0}" th:href="@{/new(folderId=${selectedFolderId})}" class="btn btn-primary">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Note
-        </a>
+        <div class="user-avatar" th:if="${userName != null}" th:title="${userName}">
+            <img th:if="${userAvatar != null}" th:src="${userAvatar}" th:alt="${userName}">
+            <span th:if="${userAvatar == null}" th:text="${#strings.substring(userName,0,1).toUpperCase()}">U</span>
+        </div>
     </div>
 </nav>
 
 <div class="main-layout">
-
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    <!-- Sidebar — note list only, New Note at bottom -->
+    <aside class="editor-sidebar">
         <h3>Notes</h3>
         <ul class="note-list">
             <li th:each="n : ${notes}">
                 <a th:href="@{/edit/{id}(id=${n.id})}" th:classappend="${note.id == n.id} ? ' active-note' : ''">
-                    <span class="note-accent-dot" th:if="${n.accentColor != null}" th:style="|background-color: ${n.accentColor}|"></span>
+                    <span class="note-accent-dot" th:if="${n.accentColor != null}" th:style="|background-color:${n.accentColor}|"></span>
                     <span th:text="${n.title}" style="overflow:hidden;text-overflow:ellipsis;">Note</span>
                 </a>
             </li>
         </ul>
-        <div class="sidebar-new-note">
-            <a th:if="${selectedFolderId == null or selectedFolderId == 0}" href="/new">
+        <div style="padding:8px;border-top:1px solid var(--border-soft);">
+            <a th:if="${selectedFolderId == null or selectedFolderId == 0}" href="/new"
+               style="display:flex;align-items:center;gap:6px;padding:6px 8px;font-size:0.775rem;color:var(--text-muted);border-radius:var(--r-sm);transition:background var(--t),color var(--t);text-decoration:none;"
+               onmouseover="this.style.background='var(--bg-elevated)';this.style.color='var(--text-primary)'"
+               onmouseout="this.style.background='';this.style.color='var(--text-muted)'">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 New Note
             </a>
-            <a th:if="${selectedFolderId != null and selectedFolderId != 0}" th:href="@{/new(folderId=${selectedFolderId})}">
+            <a th:if="${selectedFolderId != null and selectedFolderId != 0}" th:href="@{/new(folderId=${selectedFolderId})}"
+               style="display:flex;align-items:center;gap:6px;padding:6px 8px;font-size:0.775rem;color:var(--text-muted);border-radius:var(--r-sm);transition:background var(--t),color var(--t);text-decoration:none;"
+               onmouseover="this.style.background='var(--bg-elevated)';this.style.color='var(--text-primary)'"
+               onmouseout="this.style.background='';this.style.color='var(--text-muted)'">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 New Note
             </a>
         </div>
     </aside>
 
-    <!-- Workspace -->
     <main class="workspace">
         <form th:action="@{/save}" th:object="${note}" method="post" class="editor-form" id="editor-save-form">
             <input type="hidden" th:field="*{id}">
@@ -85,15 +86,11 @@
             <div class="toolbar">
                 <div class="toolbar-main">
                     <input type="text" th:field="*{title}" placeholder="Untitled" required class="title-input">
-
-                    <!-- Hidden native select for form submission -->
                     <select name="folderId" id="note-folder-select" style="display:none;">
                         <option value="" th:selected="${selectedFolderId == null or selectedFolderId == 0}">No folder</option>
                         <option th:each="f : ${folders}" th:value="${f.id}" th:text="${f.name}"
                                 th:selected="${selectedFolderId != null and selectedFolderId == f.id}"></option>
                     </select>
-
-                    <!-- Custom folder chip -->
                     <div class="folder-chip" id="folder-chip-btn" tabindex="0">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
                         <span id="folder-chip-label">No folder</span>
@@ -101,13 +98,11 @@
                         <div class="folder-dropdown-menu" id="folder-dropdown-menu"></div>
                     </div>
                 </div>
-
                 <div class="toolbar-actions">
                     <a th:if="${note.id != null}" th:href="@{/delete/{id}(id=${note.id})}" class="btn-delete"
                        title="Delete note" onclick="return confirm('Delete this note?');">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </a>
-
                     <div class="save-dropdown">
                         <button type="submit" class="save-main-btn">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
@@ -145,39 +140,21 @@
                 <button type="button" class="fmt-btn" data-action="h2">H2</button>
                 <button type="button" class="fmt-btn" data-action="h3">H3</button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" data-action="bold" title="Bold Ctrl+B">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg>
-                </button>
-                <button type="button" class="fmt-btn" data-action="italic" title="Italic Ctrl+I">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg>
-                </button>
-                <button type="button" class="fmt-btn" data-action="strikethrough" title="Strikethrough">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><path d="M16 6C16 6 14.5 4 12 4s-5 1.5-5 4c0 5 9 4 9 8s-2.5 4-4 4-5-2-5-2"/></svg>
-                </button>
-                <button type="button" class="fmt-btn" data-action="inlinecode" title="Inline Code">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                </button>
+                <button type="button" class="fmt-btn" data-action="bold" title="Bold Ctrl+B"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></button>
+                <button type="button" class="fmt-btn" data-action="italic" title="Italic Ctrl+I"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></button>
+                <button type="button" class="fmt-btn" data-action="strikethrough"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><path d="M16 6C16 6 14.5 4 12 4s-5 1.5-5 4c0 5 9 4 9 8s-2.5 4-4 4-5-2-5-2"/></svg></button>
+                <button type="button" class="fmt-btn" data-action="inlinecode"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" data-action="blockquote" title="Blockquote">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
-                </button>
-                <button type="button" class="fmt-btn" data-action="codeblock" title="Code Block">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                </button>
+                <button type="button" class="fmt-btn" data-action="blockquote"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg></button>
+                <button type="button" class="fmt-btn" data-action="codeblock"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" data-action="ul" title="Bullet List">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
-                </button>
-                <button type="button" class="fmt-btn" data-action="ol" title="Numbered List">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
-                </button>
+                <button type="button" class="fmt-btn" data-action="ul"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg></button>
+                <button type="button" class="fmt-btn" data-action="ol"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4"/><path d="M4 10h2"/><path d="M6 18H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" data-action="link" title="Link Ctrl+K">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                </button>
-                <button type="button" class="fmt-btn" data-action="hr" title="Horizontal Rule">—</button>
+                <button type="button" class="fmt-btn" data-action="link" title="Ctrl+K"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+                <button type="button" class="fmt-btn" data-action="hr">—</button>
                 <div class="fmt-divider"></div>
-                <button type="button" class="fmt-btn" id="btn-fullscreen" title="Fullscreen" style="min-width:auto;padding:0 6px;">
+                <button type="button" class="fmt-btn" id="btn-fullscreen" style="padding:0 6px;">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="fs-expand"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="fs-collapse" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
                 </button>
@@ -201,12 +178,7 @@
 
             <!-- Status bar -->
             <div class="editor-statusbar">
-                <span class="statusbar-shortcuts">
-                    <kbd>⌘S</kbd> Save &nbsp;·&nbsp;
-                    <kbd>⌘B</kbd> Bold &nbsp;·&nbsp;
-                    <kbd>⌘I</kbd> Italic &nbsp;·&nbsp;
-                    <kbd>⌘K</kbd> Link
-                </span>
+                <span>⌘S Save &nbsp;·&nbsp; ⌘B Bold &nbsp;·&nbsp; ⌘I Italic &nbsp;·&nbsp; ⌘K Link</span>
                 <span class="statusbar-right">
                     <span id="word-count">0 words</span>
                     <span id="char-count">0 chars</span>
@@ -216,133 +188,110 @@
     </main>
 </div>
 
-<!-- Theme toggle -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('theme-toggle');
-    const iconDark = document.getElementById('theme-icon-dark');
-    const iconLight = document.getElementById('theme-icon-light');
-    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    // Theme toggle
+    var btn = document.getElementById('theme-toggle');
+    var iconDark = document.getElementById('theme-icon-dark');
+    var iconLight = document.getElementById('theme-icon-light');
+    var cur = document.documentElement.getAttribute('data-theme') || 'dark';
     (cur === 'dark' ? iconLight : iconDark).style.display = 'block';
     btn.addEventListener('click', function() {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const next = isDark ? 'light' : 'dark';
+        var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        var next = isDark ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
         iconDark.style.display = isDark ? 'block' : 'none';
         iconLight.style.display = isDark ? 'none' : 'block';
     });
-});
-</script>
 
-<!-- Folder dropdown -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var sel   = document.getElementById('note-folder-select');
-    var chip  = document.getElementById('folder-chip-btn');
+    // Folder dropdown
+    var sel = document.getElementById('note-folder-select');
+    var chip = document.getElementById('folder-chip-btn');
     var label = document.getElementById('folder-chip-label');
-    var menu  = document.getElementById('folder-dropdown-menu');
-
-    if (!sel || !chip || !label || !menu) return;
+    var menu = document.getElementById('folder-dropdown-menu');
 
     function buildMenu() {
         menu.innerHTML = '';
         Array.from(sel.options).forEach(function(opt) {
-            var btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'folder-dropdown-item' + (opt.value === sel.value ? ' selected' : '');
-            btn.textContent = opt.text;
-            btn.addEventListener('click', function(e) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'folder-dropdown-item' + (opt.value === sel.value ? ' selected' : '');
+            b.textContent = opt.text;
+            b.addEventListener('click', function(e) {
                 e.stopPropagation();
                 sel.value = opt.value;
                 label.textContent = opt.text;
                 menu.classList.remove('open');
                 buildMenu();
             });
-            menu.appendChild(btn);
+            menu.appendChild(b);
         });
     }
 
     label.textContent = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : 'No folder';
     buildMenu();
-
-    chip.addEventListener('click', function(e) {
-        e.stopPropagation();
-        menu.classList.toggle('open');
-    });
-
-    document.addEventListener('click', function() {
-        menu.classList.remove('open');
-    });
+    chip.addEventListener('click', function(e) { e.stopPropagation(); menu.classList.toggle('open'); });
+    document.addEventListener('click', function() { menu.classList.remove('open'); });
 });
 </script>
 
-<!-- Live preview + word count -->
 <script>
-var inputEl   = document.getElementById('markdown-input');
+// Preview + word count
+var inputEl = document.getElementById('markdown-input');
 var previewEl = document.getElementById('markdown-preview');
-var wordEl    = document.getElementById('word-count');
-var charEl    = document.getElementById('char-count');
+var wordEl = document.getElementById('word-count');
+var charEl = document.getElementById('char-count');
 
 function updatePreview() {
     previewEl.innerHTML = marked.parse(inputEl.value || '');
-    var text  = inputEl.value.trim();
+    var text = inputEl.value.trim();
     var words = text ? text.split(/\s+/).filter(Boolean).length : 0;
     wordEl.textContent = words + ' word' + (words !== 1 ? 's' : '');
     charEl.textContent = text.length + ' char' + (text.length !== 1 ? 's' : '');
 }
-
 inputEl.addEventListener('input', updatePreview);
 updatePreview();
+
+// Line numbers
+var ln = document.getElementById('line-numbers');
+function updateLines() {
+    var lines = (inputEl.value.match(/\n/g) || []).length + 1;
+    var html = '';
+    for (var i = 1; i <= lines; i++) html += '<span>' + i + '</span>';
+    ln.innerHTML = html;
+    ln.scrollTop = inputEl.scrollTop;
+}
+inputEl.addEventListener('input', updateLines);
+inputEl.addEventListener('scroll', function() { ln.scrollTop = inputEl.scrollTop; });
+updateLines();
 </script>
 
-<!-- Line numbers -->
 <script>
-(function() {
-    var ta = document.getElementById('markdown-input');
-    var ln = document.getElementById('line-numbers');
-
-    function updateLines() {
-        var lines = (ta.value.match(/\n/g) || []).length + 1;
-        var html = '';
-        for (var i = 1; i <= lines; i++) html += '<span>' + i + '</span>';
-        ln.innerHTML = html;
-        ln.scrollTop = ta.scrollTop;
-    }
-
-    ta.addEventListener('input', updateLines);
-    ta.addEventListener('scroll', function() { ln.scrollTop = ta.scrollTop; });
-    updateLines();
-})();
-</script>
-
-<!-- Formatting toolbar -->
-<script>
+// Formatting toolbar
 (function() {
     var ta = document.getElementById('markdown-input');
 
-    function applyChange(newVal, newStart, newEnd) {
-        ta.focus();
-        ta.select();
-        document.execCommand('insertText', false, newVal);
-        ta.setSelectionRange(newStart, newEnd);
+    function applyChange(v, s, e) {
+        ta.focus(); ta.select();
+        document.execCommand('insertText', false, v);
+        ta.setSelectionRange(s, e);
         ta.dispatchEvent(new Event('input'));
     }
 
-    function wrapInline(before, after, placeholder) {
+    function wrapInline(before, after, ph) {
         var s = ta.selectionStart, e = ta.selectionEnd;
-        var sel = ta.value.substring(s, e) || placeholder;
-        var newVal = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
-        applyChange(newVal, s + before.length, s + before.length + sel.length);
+        var sel = ta.value.substring(s, e) || ph;
+        var v = ta.value.substring(0, s) + before + sel + after + ta.value.substring(e);
+        applyChange(v, s + before.length, s + before.length + sel.length);
     }
 
     function prefixLines(prefix) {
         var s = ta.selectionStart, e = ta.selectionEnd, full = ta.value;
         var ls = full.lastIndexOf('\n', s - 1) + 1;
         var le = full.indexOf('\n', e) === -1 ? full.length : full.indexOf('\n', e);
-        var prefixed = full.substring(ls, le).split('\n').map(function(l) { return prefix + l; }).join('\n');
-        var newVal = full.substring(0, ls) + prefixed + full.substring(le);
-        applyChange(newVal, ls, ls + prefixed.length);
+        var pref = full.substring(ls, le).split('\n').map(function(l) { return prefix + l; }).join('\n');
+        applyChange(full.substring(0, ls) + pref + full.substring(le), ls, ls + pref.length);
     }
 
     function prefixOL() {
@@ -350,9 +299,8 @@ updatePreview();
         var ls = full.lastIndexOf('\n', s - 1) + 1;
         var le = full.indexOf('\n', e) === -1 ? full.length : full.indexOf('\n', e);
         var i = 1;
-        var prefixed = full.substring(ls, le).split('\n').map(function(l) { return (i++) + '. ' + l; }).join('\n');
-        var newVal = full.substring(0, ls) + prefixed + full.substring(le);
-        applyChange(newVal, ls, ls + prefixed.length);
+        var pref = full.substring(ls, le).split('\n').map(function(l) { return (i++) + '. ' + l; }).join('\n');
+        applyChange(full.substring(0, ls) + pref + full.substring(le), ls, ls + pref.length);
     }
 
     var actions = {
@@ -375,14 +323,13 @@ updatePreview();
             var pos = ta.selectionStart, full = ta.value;
             var nl = (pos > 0 && full[pos-1] !== '\n') ? '\n' : '';
             var ins = nl + '\n---\n\n';
-            var newVal = full.substring(0, pos) + ins + full.substring(pos);
-            applyChange(newVal, pos + ins.length, pos + ins.length);
+            applyChange(full.substring(0, pos) + ins + full.substring(pos), pos + ins.length, pos + ins.length);
         }
     };
 
     document.getElementById('format-toolbar').addEventListener('click', function(e) {
-        var btn = e.target.closest('[data-action]');
-        if (btn && actions[btn.dataset.action]) actions[btn.dataset.action]();
+        var b = e.target.closest('[data-action]');
+        if (b && actions[b.dataset.action]) actions[b.dataset.action]();
     });
 
     ta.addEventListener('keydown', function(e) {
@@ -397,57 +344,40 @@ updatePreview();
     var form = document.getElementById('editor-save-form');
     document.getElementById('btn-fullscreen').addEventListener('click', function() {
         var isFs = form.classList.toggle('is-fullscreen');
-        document.getElementById('fs-expand').style.display  = isFs ? 'none'  : 'block';
+        document.getElementById('fs-expand').style.display = isFs ? 'none' : 'block';
         document.getElementById('fs-collapse').style.display = isFs ? 'block' : 'none';
     });
 })();
 </script>
 
-<!-- Save dropdown / export -->
 <script>
+// Save dropdown + exports
 (function() {
     var caret = document.getElementById('save-caret-btn');
-    var menu  = document.getElementById('save-menu');
-
-    caret.addEventListener('click', function(e) {
-        e.stopPropagation();
-        menu.classList.toggle('open');
-    });
+    var menu = document.getElementById('save-menu');
+    caret.addEventListener('click', function(e) { e.stopPropagation(); menu.classList.toggle('open'); });
     document.addEventListener('click', function() { menu.classList.remove('open'); });
 
-    function getTitle() {
-        return (document.querySelector('.title-input').value || 'note').replace(/[^a-z0-9_\-\s]/gi,'').trim() || 'note';
-    }
+    function getTitle() { return (document.querySelector('.title-input').value || 'note').replace(/[^a-z0-9_\-\s]/gi,'').trim() || 'note'; }
     function getMD() { return document.getElementById('markdown-input').value; }
-    function download(content, filename, mime) {
+    function dl(content, filename, mime) {
         var blob = new Blob([content], { type: mime });
         var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = filename;
-        a.click();
+        a.href = URL.createObjectURL(blob); a.download = filename; a.click();
         URL.revokeObjectURL(a.href);
     }
 
-    document.getElementById('dl-md').addEventListener('click', function() {
-        download(getMD(), getTitle() + '.md', 'text/markdown');
-        menu.classList.remove('open');
-    });
-
+    document.getElementById('dl-md').addEventListener('click', function() { dl(getMD(), getTitle()+'.md', 'text/markdown'); menu.classList.remove('open'); });
     document.getElementById('dl-html').addEventListener('click', function() {
-        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + getTitle() + '</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}pre{background:#f4f4f4;padding:1rem;border-radius:6px;}code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style></head><body>' + marked.parse(getMD()) + '</body></html>';
-        download(html, getTitle() + '.html', 'text/html');
+        dl('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+getTitle()+'</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}pre{background:#f4f4f4;padding:1rem;border-radius:6px;}code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style></head><body>'+marked.parse(getMD())+'</body></html>', getTitle()+'.html', 'text/html');
         menu.classList.remove('open');
     });
-
     document.getElementById('dl-pdf').addEventListener('click', function() {
         var w = window.open('', '_blank');
-        w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + getTitle() + '</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}pre{background:#f4f4f4;padding:1rem;border-radius:6px;}code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style></head><body>' + marked.parse(getMD()) + '</body></html>');
-        w.document.close();
-        w.focus();
-        setTimeout(function() { w.print(); w.close(); }, 300);
+        w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+getTitle()+'</title><style>body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.7;}pre{background:#f4f4f4;padding:1rem;border-radius:6px;}code{background:#f4f4f4;padding:.2em .4em;border-radius:3px;}blockquote{border-left:4px solid #ccc;margin:0;padding-left:1rem;color:#555;}</style></head><body>'+marked.parse(getMD())+'</body></html>');
+        w.document.close(); w.focus(); setTimeout(function() { w.print(); w.close(); }, 300);
         menu.classList.remove('open');
     });
-
     document.getElementById('copy-md-btn').addEventListener('click', function() {
         var self = this;
         navigator.clipboard.writeText(getMD()).then(function() {

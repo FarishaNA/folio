@@ -106,4 +106,9 @@ public class Note {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    @Column(nullable = false)
+    private boolean pinned = false;
+
+    public boolean isPinned() { return pinned; }
+    public void setPinned(boolean pinned) { this.pinned = pinned; }
 }
