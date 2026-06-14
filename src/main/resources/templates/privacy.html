@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Privacy Policy — Folio</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+    <style>
+        .legal-wrapper { max-width: 680px; margin: 4rem auto; padding: 0 1.5rem; }
+        .legal-logo { font-size: 1.2rem; font-weight: 700; color: var(--accent); text-decoration: none; display: block; margin-bottom: 3rem; }
+        h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+        .updated { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 2.5rem; }
+        h2 { font-size: 1rem; font-weight: 600; margin: 2rem 0 0.5rem; }
+        p, li { font-size: 0.9rem; color: var(--text-muted); line-height: 1.7; }
+        ul { padding-left: 1.25rem; }
+        .legal-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 1.5rem; }
+        .legal-footer a { font-size: 0.78rem; color: var(--text-muted); text-decoration: none; }
+        .legal-footer a:hover { color: var(--text); }
+    </style>
+</head>
+<body>
+<div class="legal-wrapper">
+    <a th:href="@{/}" class="legal-logo">Folio</a>
+    <h1>Privacy Policy</h1>
+    <div class="updated">Last updated: June 2025</div>
+
+    <h2>1. What We Collect</h2>
+    <p>When you create an account, we collect:</p>
+    <ul>
+        <li>Your chosen username</li>
+        <li>Your password (stored as a BCrypt hash — never in plain text)</li>
+        <li>Notes and folders you create within the app</li>
+    </ul>
+    <p>We do not collect email addresses, IP addresses, or any tracking data.</p>
+
+    <h2>2. How We Use Your Data</h2>
+    <p>Your data is used solely to provide the Folio service — authenticating your account and storing your notes. We do not analyze, sell, or share your data with any third party.</p>
+
+    <h2>3. Data Storage</h2>
+    <p>All data is stored in a PostgreSQL database hosted on Railway. Data is not encrypted at rest beyond password hashing, so avoid storing sensitive personal information in notes.</p>
+
+    <h2>4. Cookies and Sessions</h2>
+    <p>Folio uses a single session cookie to keep you logged in. No tracking or advertising cookies are used.</p>
+
+    <h2>5. Your Rights</h2>
+    <p>You can permanently delete your account and all associated data at any time from your <a th:href="@{/profile}" style="color:var(--accent)">profile page</a>. Deletion is immediate and irreversible.</p>
+
+    <h2>6. Third-Party Services</h2>
+    <p>Folio is hosted on Railway (<a href="https://railway.app/legal/privacy" target="_blank" style="color:var(--accent)">Railway Privacy Policy</a>). No other third-party services are used.</p>
+
+    <h2>7. Changes</h2>
+    <p>If this policy changes materially, the "Last updated" date above will reflect it.</p>
+
+    <h2>8. Contact</h2>
+    <p>Questions? Open an issue on the <a href="https://github.com/FarishaNA/springboot-markdown-notes" target="_blank" style="color:var(--accent)">GitHub repository</a>.</p>
+
+    <div class="legal-footer">
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/tos}">Terms of Service</a>
+        <a th:href="@{/profile}">Profile</a>
+    </div>
+</div>
+</body>
+</html>

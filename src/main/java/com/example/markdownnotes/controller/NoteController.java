@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
@@ -27,24 +28,21 @@ public class NoteController {
         return hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
     }
 
-    // ── Landing page ──────────────────────────────────────────
-    @GetMapping("/")
-    public String home() {
-        return "landing";
-    }
 
-    // ── Dashboard ─────────────────────────────────────────────
     @GetMapping("/dashboard")
     public String dashboard(@RequestParam(required = false) Long folderId,
                             @RequestParam(required = false) String keyword,
-                            Model model) {
+                            Model model,
+                            Principal principal) {
+        String username = principal.getName();
 
         model.addAttribute("greeting", greeting());
-        model.addAttribute("folders", folderService.getAllFolders());
+        model.addAttribute("username", username);
+        model.addAttribute("folders", folderService.getAllFolders(username));
         model.addAttribute("folderId", folderId);
         model.addAttribute("keyword", keyword);
 
-        List<Note> allNotes = noteService.listNotes(null, null);
+        List<Note> allNotes = noteService.listNotes(username, null, null);
 
         long totalWords = allNotes.stream()
             .filter(n -> n.getContent() != null && !n.getContent().isBlank())
@@ -53,7 +51,7 @@ public class NoteController {
             .sum();
 
         model.addAttribute("totalNotes", allNotes.size());
-        model.addAttribute("totalFolders", folderService.getAllFolders().size());
+        model.addAttribute("totalFolders", folderService.getAllFolders(username).size());
         model.addAttribute("totalWords", totalWords);
 
         List<Note> recentNotes = allNotes.stream()
@@ -69,47 +67,49 @@ public class NoteController {
         model.addAttribute("pinnedNotes", pinnedNotes);
 
         if (keyword != null || folderId != null) {
-            model.addAttribute("notes", noteService.listNotes(folderId, keyword));
+            model.addAttribute("notes", noteService.listNotes(username, folderId, keyword));
         }
 
-        return "index";
+        return "dashboard";
     }
 
-    // ── New note ──────────────────────────────────────────────
     @GetMapping("/new")
     public String newNoteForm(@RequestParam(required = false) Long folderId,
                               @RequestParam(required = false) String keyword,
-                              Model model) {
+                              Model model,
+                              Principal principal) {
+        String username = principal.getName();
         model.addAttribute("note", new Note());
-        model.addAttribute("notes", noteService.listNotes(folderId, keyword));
-        model.addAttribute("folders", folderService.getAllFolders());
+        model.addAttribute("notes", noteService.listNotes(username, folderId, keyword));
+        model.addAttribute("folders", folderService.getAllFolders(username));
         model.addAttribute("selectedFolderId", folderId);
         model.addAttribute("folderId", folderId);
         model.addAttribute("keyword", keyword);
         return "editor";
     }
 
-    // ── Save note ─────────────────────────────────────────────
     @PostMapping("/save")
     public String saveNote(@ModelAttribute("note") Note note,
-                           @RequestParam(required = false) Long folderId) {
-        noteService.saveNote(note, folderId);
+                           @RequestParam(required = false) Long folderId,
+                           Principal principal) {
+        noteService.saveNote(note, folderId, principal.getName());
         if (folderId != null && folderId > 0) {
             return "redirect:/dashboard?folderId=" + folderId;
         }
         return "redirect:/dashboard";
     }
 
-    // ── Edit note ─────────────────────────────────────────────
     @GetMapping("/edit/{id}")
     public String editNoteForm(@PathVariable Long id,
                                @RequestParam(required = false) Long folderId,
                                @RequestParam(required = false) String keyword,
-                               Model model) {
-        Note note = noteService.getNoteById(id);
+                               Model model,
+                               Principal principal) {
+        String username = principal.getName();
+        Note note = noteService.getNoteById(id, principal.getName());
         model.addAttribute("note", note);
-        model.addAttribute("notes", noteService.listNotes(folderId, keyword));
-        model.addAttribute("folders", folderService.getAllFolders());
+        model.addAttribute("notes", noteService.listNotes(username, folderId, keyword));
+        model.addAttribute("folders", folderService.getAllFolders(username));
         Long selected = note.getFolder() != null ? note.getFolder().getId() : null;
         model.addAttribute("selectedFolderId", selected);
         model.addAttribute("folderId", folderId);
@@ -117,35 +117,31 @@ public class NoteController {
         return "editor";
     }
 
-    // ── Delete note ───────────────────────────────────────────
     @GetMapping("/delete/{id}")
-    public String deleteNote(@PathVariable Long id) {
-        noteService.deleteNote(id);
+    public String deleteNote(@PathVariable Long id, Principal principal) {
+        noteService.deleteNote(id, principal.getName());
         return "redirect:/dashboard";
     }
 
-    // ── Create folder ─────────────────────────────────────────
     @PostMapping("/folders")
-    public String createFolder(@RequestParam String name) {
+    public String createFolder(@RequestParam String name, Principal principal) {
         if (name != null && !name.trim().isEmpty()) {
-            folderService.createFolder(name.trim());
+            folderService.createFolder(name.trim(), principal.getName());
         }
         return "redirect:/dashboard";
     }
 
-    // ── Delete folder ─────────────────────────────────────────
     @GetMapping("/folders/delete/{id}")
-    public String deleteFolder(@PathVariable Long id) {
-        folderService.deleteFolder(id);
+    public String deleteFolder(@PathVariable Long id, Principal principal) {
+        folderService.deleteFolder(id, principal.getName());
         return "redirect:/dashboard";
     }
 
-    // ── Pin / unpin ───────────────────────────────────────────
     @PostMapping("/pin/{id}")
-    public String pinNote(@PathVariable Long id) {
-        Note note = noteService.getNoteById(id);
+    public String pinNote(@PathVariable Long id, Principal principal) {
+        Note note = noteService.getNoteById(id, principal.getName());
         note.setPinned(!note.isPinned());
-        noteService.saveNote(note, note.getFolder() != null ? note.getFolder().getId() : null);
+        noteService.saveNote(note, note.getFolder() != null ? note.getFolder().getId() : null, principal.getName());
         return "redirect:/edit/" + id;
     }
 }

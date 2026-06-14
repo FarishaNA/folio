@@ -968,6 +968,17 @@ a { color: inherit; text-decoration: none; }
   overflow: hidden;
 }
 
+.quick-card-preview {
+    font-size: 0.775rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
 /* Empty state */
 .empty-state {
   display: flex;
