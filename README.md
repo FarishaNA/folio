@@ -43,69 +43,37 @@ A personal markdown workspace — write, organize, and export notes with a clean
 markdownnotes/
 
 ├── src/main/java/com/example/markdownnotes/
-
 │   ├── config/
-
 │   │   ├── SecurityConfig.java
-
 │   │   └── PasswordConfig.java
-
 │   ├── controller/
-
 │   │   ├── NoteController.java
-
 │   │   ├── AuthController.java
-
 │   │   └── ProfileController.java
-
 │   ├── model/
-
 │   │   ├── Note.java
-
 │   │   ├── Folder.java
-
 │   │   └── User.java
-
 │   ├── repository/
-
 │   │   ├── NoteRepository.java
-
 │   │   ├── FolderRepository.java
-
 │   │   └── UserRepository.java
-
 │   └── service/
-
 │       ├── NoteService.java
-
 │       ├── FolderService.java
-
 │       └── UserService.java
-
 ├── src/main/resources/
-
 │   ├── application.properties
-
 │   ├── static/css/style.css
-
 │   └── templates/
-
 │       ├── landing.html
-
 │       ├── dashboard.html
-
 │       ├── editor.html
-
 │       ├── login.html
-
 │       ├── register.html
-
 │       ├── profile.html
-
 │       ├── privacy.html
-
 │       └── tos.html
-
 └── pom.xml
 
 ---
