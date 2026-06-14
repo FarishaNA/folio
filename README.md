@@ -2,7 +2,7 @@
 
 A personal markdown workspace — write, organize, and export notes with a clean dark UI.
 
-**[Live Demo](https://springboot-markdown-notes-production.up.railway.app)**
+**[Live Demo](https://folio-notes.up.railway.app/)**
 
 ---
 
