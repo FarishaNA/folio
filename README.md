@@ -40,8 +40,8 @@ A personal markdown workspace — write, organize, and export notes with a clean
 
 ## Project Structure
 
+```
 markdownnotes/
-
 ├── src/main/java/com/example/markdownnotes/
 │   ├── config/
 │   │   ├── SecurityConfig.java
@@ -75,6 +75,7 @@ markdownnotes/
 │       ├── privacy.html
 │       └── tos.html
 └── pom.xml
+```
 
 ---
 
